@@ -1,0 +1,28 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+row {
+  display: flex;
+  flex-direction: column;
+}
+</style>
+</head>
+<body>
+    <div class="row">
+    <div>
+    <a href={{prev}}><button>prev</button></a>
+    <a href={{next}}><button>next</button></a>
+    </div>
+    {%for image in images%}
+        <img src={{image}} />
+    {%endfor%}
+    <div>
+    <a href={{prev}}><button>prev</button></a>
+    <a href={{next}}><button>next</button></a>
+    </div>
+    </div>
+</body>
+</html>
