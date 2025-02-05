@@ -1,28 +1,102 @@
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-row {
-  display: flex;
-  flex-direction: column;
-}
-</style>
-</head>
-<body>
-    <div class="row">
-    <div>
-    <a href={{prev}}><button>prev</button></a>
-    <a href={{next}}><button>next</button></a>
-    </div>
-    {%for image in images%}
-        <img src={{image}} style="object-fit: cover;width: 100%;"/>
-    {%endfor%}
-    <div>
-    <a href={{prev}}><button>prev</button></a>
-    <a href={{next}}><button>next</button></a>
-    </div>
-    </div>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            .row {
+                display: flex;
+                flex-direction: column;
+            }
+            .image-container {
+                width: 100%;
+                min-height: 100px;
+                margin: 10px 0;
+            }
+            .loading {
+                text-align: center;
+                padding: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="row">
+            <div>
+                <a href="{{prev}}"><button>prev</button></a>
+                <a href="{{next}}"><button>next</button></a>
+            </div>
+            <div id="imageContainer"></div>
+            <div>
+                <a href="{{prev}}"><button>prev</button></a>
+                <a href="{{next}}"><button>next</button></a>
+            </div>
+            <div id="loading" class="loading">Loading more images...</div>
+        </div>
+
+        <script>
+            const comic = window.location.pathname.split("/")[1];
+            const chapter = window.location.pathname.split("/")[2];
+            let currentImage = 1;
+            let loading = false;
+            let endReached = false;
+
+            async function checkImage(url) {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = () => resolve(true);
+                    img.onerror = () => resolve(false);
+                    img.src = url;
+                });
+            }
+
+            async function loadNextImage() {
+                if (loading || endReached) return;
+
+                loading = true;
+                const url = `https://cdn4.webtoonscan.com/site-1/${comic}/${chapter}/${currentImage}.jpg`;
+
+                const exists = await checkImage(url);
+                if (exists) {
+                    const container = document.getElementById("imageContainer");
+                    const imgWrapper = document.createElement("div");
+                    imgWrapper.className = "image-container";
+
+                    const img = document.createElement("img");
+                    img.src = url;
+                    img.style.width = "100%";
+                    img.style.objectFit = "cover";
+
+                    imgWrapper.appendChild(img);
+                    container.appendChild(imgWrapper);
+
+                    currentImage++;
+                    loading = false;
+                } else {
+                    endReached = true;
+                    document.getElementById("loading").style.display = "none";
+                }
+            }
+
+            // Initial load of several images
+            async function initialLoad() {
+                for (let i = 0; i < 5; i++) {
+                    await loadNextImage();
+                }
+            }
+
+            // Infinite scroll
+            window.addEventListener("scroll", () => {
+                if (
+                    window.innerHeight + window.scrollY >=
+                    document.body.offsetHeight - 1000
+                ) {
+                    loadNextImage();
+                }
+            });
+
+            // Start loading images
+            initialLoad();
+        </script>
+    </body>
 </html>
