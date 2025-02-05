@@ -23,8 +23,7 @@ def home():
 def load_page(comic, chapter):
     next = f"/{comic}/{int(chapter)+1}"
     prev = f"/{comic}/{int(chapter)-1}"
-    images = get_valid_urls(comic, f"{chapter}")
-    return render_template('comic.html', images=images, next=next, prev=prev)
+    return render_template('comic.html', next=next, prev=prev)
 
 def check_url(args):
     """Function to check individual URL"""
