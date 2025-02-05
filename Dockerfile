@@ -17,7 +17,6 @@ COPY . .
 RUN mkdir -p templates
 
 # Add requests package (since it's used in the code but not in requirements.txt)
-RUN pip install requests
 
 # Set environment variables
 ENV FLASK_APP=main.py
